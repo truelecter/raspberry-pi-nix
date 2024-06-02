@@ -38,6 +38,16 @@ in
           '';
         };
       };
+      core-overlay = {
+        enable = mkOption {
+          default = true;
+          type = types.bool;
+          description = ''
+            If enabled then the core overlay is applied which
+            provides updated kernel, firmware and uboot
+          '';
+        };
+      };
       uboot = {
         enable = mkOption {
           default = true;
@@ -271,7 +281,8 @@ in
     };
 
     nixpkgs = {
-      overlays = [ core-overlay ]
+      overlays = (if config.raspberry-pi-nix.core-overlay.enable
+      then [ core-overlay ] else [ ])
         ++ (if config.raspberry-pi-nix.libcamera-overlay.enable
       then [ libcamera-overlay ] else [ ]);
     };
