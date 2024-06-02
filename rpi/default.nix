@@ -280,12 +280,14 @@ in
       };
     };
 
-    nixpkgs = {
-      overlays = (if config.raspberry-pi-nix.core-overlay.enable
-      then [ core-overlay ] else [ ])
-        ++ (if config.raspberry-pi-nix.libcamera-overlay.enable
-      then [ libcamera-overlay ] else [ ]);
+    nixpkgs = let
+      overlays = (lib.optional config.raspberry-pi-nix.core-overlay.enable core-overlay)
+        ++ (lib.optional config.raspberry-pi-nix.libcamera-overlay.enable libcamera-overlay);
+    in if overlays != [] then {} 
+    else {
+      inherit overlays;
     };
+
     boot = {
       initrd.availableKernelModules = [
         "usbhid"
